@@ -1,107 +1,182 @@
-# Exhalo-Scan v2.0.0
-## Publication-Grade Multi-Omic Respiratory Disease Classification via Volatomics
+<div align="center">
 
-**Author:** Niraj — IISER Tirupati (OMICS + Deep Learning Course Project)  
-**Dataset:** MTBLS70 — Exhaled breath VOC profiles (Asthma / COPD / Bronchiectasis)  
-**Pipeline:** Nextflow DSL2 | Python 3.11
+# 🫁 Exhalo-Scan v2.0.0
 
----
+### Publication-Grade Multi-Omic Respiratory Disease Classification via Volatomics
 
-## Overview
+[![Nextflow](https://img.shields.io/badge/Nextflow-DSL2-brightgreen?logo=nextflow&logoColor=white)](https://nextflow.io)
+[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![XGBoost](https://img.shields.io/badge/ML-XGBoost%20%7C%20SHAP-orange)](https://xgboost.readthedocs.io)
+[![Dataset: MTBLS70](https://img.shields.io/badge/Dataset-MTBLS70-blueviolet)](https://www.ebi.ac.uk/metabolights/MTBLS70)
+[![IISER Tirupati](https://img.shields.io/badge/IISER-Tirupati-red)](https://www.iisertirupati.ac.in)
 
-Exhalo-Scan is a fully modular, reproducible metabolomics + ML + systems biology pipeline for classifying respiratory diseases from exhaled breath volatile organic compound (VOC) profiles. Version 2 adds:
+**Can exhaled breath tell us which respiratory disease you have?**  
+Exhalo-Scan answers this using volatile organic compound (VOC) metabolomics, machine learning, and systems biology — all in one reproducible pipeline.
 
-- **Batch correction** (ComBat / LOESS)
-- **Robust feature selection** (LASSO + Boruta + Stability Selection)
-- **External validation** module
-- **Robustness testing** (ablation, noise, subsampling)
-- **Metabolite annotation** (PubChem, HMDB, KEGG)
-- **Pathway + network analysis** (Fisher enrichment + networkx co-membership network)
-- **Multi-omics integration** (VOC → pathway → gene, with optional gene expression overlay)
-- **Enhanced classifiers** (LR baseline, SVM, calibration curves, decision curve analysis)
-- **Publication-quality self-contained HTML report**
+*Author: **Niraj** · IISER Tirupati · OMICS + Deep Learning Course Project 2025*
+
+</div>
 
 ---
 
-## Pipeline Architecture
+## 🔬 What is Exhalo-Scan?
+
+Exhalo-Scan is a fully modular, end-to-end bioinformatics pipeline that classifies **Asthma**, **COPD**, and **Bronchiectasis** from exhaled breath **VOC profiles** — without any invasive procedures.
+
+It combines:
+- 🧹 **Robust preprocessing** — PQN normalisation, KNN imputation, ComBat batch correction
+- 🎯 **Biomarker discovery** — Random Forest + SHAP + Boruta + LASSO stability selection
+- 🤖 **Machine learning classification** — XGBoost with nested cross-validation
+- 🗺️ **Pathway & network analysis** — KEGG/HMDB enrichment + metabolite co-membership networks
+- 🧬 **Multi-omics integration** — VOC → pathway → gene expression overlay
+- 📊 **Publication-quality reporting** — self-contained HTML report with all figures
+
+> **Dataset:** [MTBLS70](https://www.ebi.ac.uk/metabolights/MTBLS70) — Exhaled breath VOC profiles from 3 respiratory disease groups.
+
+---
+
+## 📊 Key Results
+
+### 🔴 Classification Performance
+
+| ROC-AUC Curves | Confusion Matrix |
+|:-:|:-:|
+| ![ROC-AUC](docs/images/roc_auc_curves.png) | ![Confusion Matrix](docs/images/confusion_matrix.png) |
+| *One-vs-rest classification per disease class* | *Nested cross-validation predictions* |
+
+| Precision-Recall Curves | Top Biomarker Heatmap |
+|:-:|:-:|
+| ![PR Curves](docs/images/pr_curves.png) | ![Biomarker Heatmap](docs/images/biomarker_heatmap.png) |
+| *Performance under class imbalance* | *VOC expression across disease classes* |
+
+---
+
+### 🧬 Biomarker Discovery
+
+| SHAP Summary Plot | Random Forest Feature Importance |
+|:-:|:-:|
+| ![SHAP](docs/images/shap_summary_plot.png) | ![RF Importance](docs/images/rf_feature_importance.png) |
+| *Feature impact & direction on model output* | *Top VOC biomarkers ranked by importance* |
+
+---
+
+### 🗺️ Pathway & Network Analysis
+
+| Pathway Enrichment Dot Plot | VOC–Pathway Co-membership Network |
+|:-:|:-:|
+| ![Pathway Dotplot](docs/images/pathway_dotplot.png) | ![VOC Network](docs/images/voc_pathway_network.png) |
+| *KEGG/HMDB pathway enrichment (MSEA)* | *Metabolite co-occurrence across pathways* |
+
+---
+
+### 🧹 Preprocessing & QC
+
+| PCA Before & After Normalisation | VOC Intensity Distribution |
+|:-:|:-:|
+| ![PCA](docs/images/pca_before_after.png) | ![Intensity](docs/images/intensity_distribution.png) |
+| *Batch correction effect on sample clustering* | *Raw vs. normalised signal distributions* |
+
+<div align="center">
+
+![Missing Value Heatmap](docs/images/missing_value_heatmap.png)  
+*Missing Value Heatmap — missingness pattern across samples and features*
+
+</div>
+
+---
+
+## 🏗️ Pipeline Architecture
 
 ```
 Raw VOC Peak Table (CSV)
         │
         ▼
- ┌─────────────┐
- │  PREPROCESS  │  PQN normalisation → KNN imputation → log-scaling
- └─────────────┘
+ ┌─────────────────────────────────────────────┐
+ │  1. PREPROCESS                               │
+ │     PQN normalisation → KNN imputation       │
+ │     → log-scaling → QC plots                 │
+ └───────────────────┬─────────────────────────┘
+                     │
+                     ▼
+ ┌─────────────────────────────────────────────┐
+ │  2. BATCH CORRECTION                         │
+ │     ComBat (if batch column present)         │
+ │     or LOESS smoothing                       │
+ └──────┬──────────────────────────────────────┘
         │
-        ▼
- ┌──────────────────┐
- │  BATCH_CORRECTION │  ComBat (if batch column present) or LOESS
- └──────────────────┘
-        │
-        ├──────────────────────────────────────────┐
-        ▼                                          ▼
- ┌──────────────────┐                    ┌───────────────────┐
- │ BIOMARKER_DISC.  │  RF + SHAP         │ FEATURE_SELECTION │  LASSO + Boruta + Stability
- └──────────────────┘                    └───────────────────┘
-                                                   │
-                                                   ▼
-                                         ┌─────────────────────┐
-                                         │    CLASSIFICATION    │  XGBoost nested CV
-                                         └─────────────────────┘
-                                                   │
-                                         ┌─────────────────────────┐
-                                         │  CLASSIFICATION_ENHANCED │  LR + SVM + Calibration + DCA
-                                         └─────────────────────────┘
-                                                   │
-                                         ┌─────────────────────┐
-                                         │ EXTERNAL_VALIDATION  │  (optional)
-                                         └─────────────────────┘
-                                                   │
-                                         ┌───────────┐
-                                         │ ROBUSTNESS │  Ablation + Noise + Subsampling
-                                         └───────────┘
-                                                   │
-                               ┌───────────────────┤
-                               │                   │
-                               ▼                   ▼
-                        ┌──────────┐     ┌──────────────────┐
-                        │ ENRICHMENT│     │   ANNOTATION     │  PubChem + HMDB + KEGG
-                        │  (MSEA)  │     └──────────────────┘
-                        └──────────┘              │
-                                         ┌────────────────┐
-                                         │ PATHWAY_ANALYSIS│  Fisher + networkx
-                                         └────────────────┘
-                                                   │
-                                         ┌──────────────┐
-                                         │  MULTIOMICS   │  VOC → Pathway → Gene
-                                         └──────────────┘
-                                                   │
-                                         ┌──────────────────┐
-                                         │  REPORT_GEN_V2   │  Publication HTML report
-                                         └──────────────────┘
+        ├──────────────────────┐
+        ▼                      ▼
+ ┌──────────────┐    ┌───────────────────────┐
+ │  3. BIOMARKER │    │  4. FEATURE SELECTION  │
+ │   DISCOVERY   │    │  LASSO + Boruta +      │
+ │  RF + SHAP    │    │  Stability Selection   │
+ └──────────────┘    └───────────┬───────────┘
+                                 │
+                                 ▼
+                     ┌───────────────────────┐
+                     │  5. CLASSIFICATION     │
+                     │  XGBoost — Nested CV   │
+                     │  LR + SVM + Calibration│
+                     └───────────┬───────────┘
+                                 │
+                     ┌───────────┴───────────┐
+                     ▼                       ▼
+          ┌──────────────────┐   ┌───────────────────┐
+          │ 6. EXT VALIDATION │   │  7. ROBUSTNESS     │
+          │ (optional)        │   │  Ablation + Noise  │
+          └──────────────────┘   └───────────────────┘
+                     │
+        ┌────────────┴────────────┐
+        ▼                         ▼
+ ┌─────────────┐        ┌─────────────────────┐
+ │ 8. ENRICHMENT│        │  9. ANNOTATION       │
+ │ Fisher MSEA  │        │  PubChem+HMDB+KEGG   │
+ └─────────────┘        └──────────┬──────────┘
+                                   │
+                         ┌─────────▼──────────┐
+                         │ 10. PATHWAY ANALYSIS│
+                         │ Fisher + networkx   │
+                         └─────────┬──────────┘
+                                   │
+                         ┌─────────▼──────────┐
+                         │ 11. MULTI-OMICS     │
+                         │ VOC → Pathway → Gene│
+                         └─────────┬──────────┘
+                                   │
+                         ┌─────────▼──────────┐
+                         │ 12. REPORT GEN v2   │
+                         │ Self-contained HTML │
+                         └────────────────────┘
 ```
 
 ---
 
-## Installation
+## ⚡ Quick Start
 
 ### Prerequisites
 
-- Python ≥ 3.11
-- Nextflow ≥ 23.04 (JVM 11+)
-- conda environment: `workshop_nf`
+| Tool | Version |
+|------|---------|
+| Python | ≥ 3.11 |
+| Nextflow | ≥ 23.04 (JVM 11+) |
+| Conda env | `workshop_nf` |
 
-### Install dependencies
+### Installation
 
 ```bash
-# Activate your conda environment
+# Clone the repository
+git clone https://github.com/nsdeshmukh306-ai/exhalo-scan-omics.git
+cd exhalo-scan-omics
+
+# Activate conda environment
 conda activate workshop_nf
 
 # Install Python dependencies
 pip install -r requirements.txt
 ```
 
-### Install Nextflow (if not present)
+### Install Nextflow (if not already installed)
 
 ```bash
 curl -s https://get.nextflow.io | bash
@@ -110,15 +185,15 @@ mv nextflow ~/.local/bin/
 
 ---
 
-## Usage
+## 🚀 Running the Pipeline
 
-### Quick start (full pipeline)
+### Basic run
 
 ```bash
 ./run_pipeline.sh -d data/MTBLS70_VOC_peak_table.csv
 ```
 
-### With external validation
+### With external validation dataset
 
 ```bash
 ./run_pipeline.sh \
@@ -127,7 +202,7 @@ mv nextflow ~/.local/bin/
     -m data/external_metadata.csv
 ```
 
-### Full run with gene expression overlay
+### Full multi-omics run (with gene expression)
 
 ```bash
 ./run_pipeline.sh \
@@ -137,61 +212,41 @@ mv nextflow ~/.local/bin/
     -g data/gene_expression.csv
 ```
 
-### Test mode (fast, ~5–10 min)
+### Other useful flags
 
-```bash
-./run_pipeline.sh --test
-```
-
-### Offline mode (no REST API calls)
-
-```bash
-./run_pipeline.sh -d data/MTBLS70_VOC_peak_table.csv --no_api
-```
-
-### Resume interrupted run
-
-```bash
-./run_pipeline.sh -d data/MTBLS70_VOC_peak_table.csv --resume
-```
-
-### Direct Nextflow command
-
-```bash
-nextflow run main.nf \
-    -profile iiser_server \
-    --raw_data data/MTBLS70_VOC_peak_table.csv \
-    --ext_data data/external.csv \
-    --ext_meta data/external_meta.csv \
-    -resume
-```
+| Flag | Description |
+|------|-------------|
+| `--test` | Fast test run (~5–10 min) |
+| `--no_api` | Offline mode (no REST API calls) |
+| `--resume` | Resume interrupted pipeline run |
 
 ---
 
-## Input File Formats
+## 📂 Input File Formats
 
-### Primary VOC peak table (`--raw_data`)
-```
+### VOC Peak Table (`--raw_data`)
+
+```csv
 SampleID,VOC_1,VOC_2,...,VOC_N
 AST_001,12.4,0.0,...,8.7
 COP_001,9.1,2.3,...,6.2
+BRO_001,5.5,1.1,...,4.0
 ```
 
-### Metadata CSV (`MTBLS70_metadata.csv` — same directory as raw data)
-```
+### Metadata CSV (placed in same directory as raw data)
+
+```csv
 SampleID,Diagnosis,Batch
 AST_001,Asthma,1
 COP_001,COPD,1
 BRO_001,Bronchiectasis,2
 ```
-- `Diagnosis`: class labels (Asthma / COPD / Bronchiectasis)
-- `Batch` (optional): if present, ComBat batch correction is applied
 
-### External validation dataset
-Same format as primary data. The `Diagnosis` column must use the same class labels.
+> **Tip:** The `Batch` column is optional — if present, ComBat batch correction is automatically applied.
 
-### Gene expression (optional, for multi-omics)
-```
+### Gene Expression (optional, for multi-omics)
+
+```csv
 Gene,log2FC,adj_pvalue
 HMGCR,1.23,0.002
 IDO1,2.45,0.0001
@@ -199,74 +254,70 @@ IDO1,2.45,0.0001
 
 ---
 
-## Output Structure
+## 📁 Output Structure
 
 ```
 results/
-├── preprocessing/
+├── 🧹 preprocessing/
 │   ├── processed_data.csv
 │   ├── metadata.csv
 │   └── qc_plots/
 │       ├── missing_value_heatmap.png
 │       ├── pca_before_after.png
 │       └── intensity_distribution.png
-├── batch_correction/
+│
+├── 🔄 batch_correction/
 │   ├── batch_corrected.csv
 │   ├── pca_batch_before.png
 │   └── pca_batch_after.png
-├── feature_selection/
+│
+├── 🎯 feature_selection/
 │   ├── stable_features.csv
 │   ├── feature_stability_plot.png
 │   └── lasso_coef_plot.png
-├── biomarkers/
+│
+├── 🔬 biomarkers/
 │   ├── top_biomarkers.csv
 │   ├── shap_summary_plot.png
 │   ├── rf_feature_importance.png
 │   └── biomarker_heatmap.png
-├── classification/
-│   ├── xgb_model.pkl
+│
+├── 🤖 classification/
 │   ├── nested_cv_results.csv
 │   ├── classification_report.txt
 │   ├── confusion_matrix.png
 │   ├── roc_auc_curves.png
-│   ├── pr_curves.png
-│   ├── model_comparison.csv
-│   ├── calibration_plot.png
-│   └── decision_curve.png
-├── external_validation/      ← if --ext_data provided
+│   └── pr_curves.png
+│
+├── ✅ external_validation/    ← if --ext_data provided
 │   ├── confusion_matrix_external.png
 │   ├── roc_curves_external.png
-│   ├── performance_comparison.csv
-│   └── external_validation_report.txt
-├── robustness/
+│   └── performance_comparison.csv
+│
+├── 💪 robustness/
 │   ├── robustness_report.csv
 │   └── performance_vs_perturbation.png
-├── enrichment/               ← legacy MSEA
+│
+├── 🗺️  enrichment/
 │   ├── msea_results.csv
 │   ├── pathway_dotplot.png
 │   └── voc_pathway_network.png
-├── annotation/
+│
+├── 🏷️  annotation/
 │   └── annotation_table.csv
-├── pathway_analysis/
-│   ├── pathway_enrichment.csv
-│   ├── pathway_enrichment_plot.png
-│   ├── metabolite_network.png
-│   └── metabolite_network.graphml
-├── multiomics/
+│
+├── 🧬 multiomics/
 │   ├── pathway_gene_metabolite_map.csv
 │   └── integrated_network.png
-├── report/
-│   ├── final_report.html     ← MAIN OUTPUT (self-contained HTML)
-│   └── summary_metrics_v2.json
-└── pipeline_info/
-    ├── trace.txt
-    ├── timeline.html
-    └── report.html
+│
+└── 📄 report/
+    ├── final_report.html      ← ⭐ MAIN OUTPUT
+    └── summary_metrics_v2.json
 ```
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 Key parameters in `nextflow.config`:
 
@@ -279,128 +330,59 @@ Key parameters in `nextflow.config`:
 | `batch_col` | `"Batch"` | Metadata column for batch labels |
 | `stability_threshold` | `0.70` | Feature stability cutoff (0–1) |
 | `stability_folds` | `10` | CV folds for stability selection |
-| `no_api` | `false` | Disable REST API calls |
 | `n_outer_folds` | `5` | Outer CV folds (classification) |
-| `n_inner_folds` | `3` | Inner CV folds (hyperparameter search) |
+| `n_inner_folds` | `3` | Inner CV folds (hyperparameter tuning) |
 | `xgb_n_estimators` | `300` | XGBoost tree count |
 | `fdr_cutoff` | `0.05` | FDR threshold for pathway enrichment |
 | `dpi` | `300` | Figure resolution |
+| `no_api` | `false` | Disable external REST API calls |
 
 ---
 
-## Running Individual Steps
-
-Each module script can be run independently:
+## 🔁 Reproducibility
 
 ```bash
-# Preprocessing
-python3 scripts/preprocess.py \
-    --input data/MTBLS70_VOC_peak_table.csv \
-    --outdir results/preprocessing
-
-# Batch correction
-python3 scripts/batch_correct.py \
-    --input results/preprocessing/processed_data.csv \
-    --metadata results/preprocessing/metadata.csv \
-    --outdir results/batch_correction
-
-# Feature selection
-python3 scripts/feature_selection.py \
-    --input results/batch_correction/batch_corrected.csv \
-    --metadata results/preprocessing/metadata.csv \
-    --outdir results/feature_selection
-
-# Classification
-python3 scripts/classifier.py \
-    --input results/batch_correction/batch_corrected.csv \
-    --metadata results/preprocessing/metadata.csv \
-    --biomarkers results/feature_selection/stable_features.csv \
-    --outdir results/classification
-
-# External validation (requires model from classification step)
-python3 scripts/external_validation.py \
-    --model results/classification/xgb_model.pkl \
-    --ext_data data/external_voc.csv \
-    --ext_meta data/external_meta.csv \
-    --outdir results/external_validation
-
-# Robustness testing
-python3 scripts/robustness.py \
-    --input results/batch_correction/batch_corrected.csv \
-    --metadata results/preprocessing/metadata.csv \
-    --features results/feature_selection/stable_features.csv \
-    --outdir results/robustness
-
-# Metabolite annotation (--no_api for offline)
-python3 scripts/annotate.py \
-    --biomarkers results/feature_selection/stable_features.csv \
-    --outdir results/annotation
-
-# Pathway + network analysis
-python3 scripts/pathway_network.py \
-    --annotation results/annotation/annotation_table.csv \
-    --biomarkers results/feature_selection/stable_features.csv \
-    --outdir results/pathway_analysis
-
-# Multi-omics integration
-python3 scripts/multiomics.py \
-    --annotation results/annotation/annotation_table.csv \
-    --biomarkers results/feature_selection/stable_features.csv \
-    --outdir results/multiomics
-
-# Full report
-python3 scripts/report_gen_v2.py \
-    --outdir results/report \
-    --cv_results results/classification/nested_cv_results.csv \
-    --clf_report results/classification/classification_report.txt \
-    --msea_table results/enrichment/msea_results.csv \
-    --stable_features results/feature_selection/stable_features.csv \
-    --annotation results/annotation/annotation_table.csv \
-    --enrichment results/pathway_analysis/pathway_enrichment.csv \
-    --multiomics results/multiomics/pathway_gene_metabolite_map.csv \
-    --robustness results/robustness/robustness_report.csv \
-    --model_comparison results/classification/model_comparison.csv
-```
-
----
-
-## Reproducibility
-
-To reproduce all results exactly:
-
-```bash
-# Pin software versions
+# Export environment
 conda env export > environment.yml
 
-# Record Nextflow execution
+# View Nextflow execution log
 nextflow log
 
-# The pipeline uses fixed random seeds throughout:
-# - rf_random_state = 42 (RF, stability selection)
-# - All sklearn models use random_state=42
-# - numpy RNG seeded at 42 in bootstrap / subsampling steps
+# All random seeds are fixed at 42 throughout the pipeline
+# (RF, XGBoost, LASSO, sklearn, numpy bootstrap/subsampling)
 ```
 
 ---
 
-## Citation
+## 📚 Citation
 
 If you use Exhalo-Scan in your research, please cite:
 
 > Niraj. *Exhalo-Scan: A Multi-Omic Framework for Respiratory Disease Classification via Volatomics.*
 > IISER Tirupati — OMICS + Deep Learning Course Project, 2025.
 
-Key method references:
-- PQN normalisation: Dieterle et al. (2006) Anal. Chem. 78(13):4281–90
-- XGBoost: Chen & Guestrin (2016) KDD
-- SHAP: Lundberg & Lee (2017) NeurIPS
-- ComBat: Johnson et al. (2007) Biostatistics 8(1):118–27
-- Boruta: Kursa & Rudnicki (2010) J. Stat. Softw. 36(11):1–13
-- MSEA: Xia & Wishart (2010) Nucleic Acids Res. 38(suppl_2):W71–77
-- KEGG: Kanehisa et al. (2023) Nucleic Acids Res. 51(D1):D587–D592
+**Key method references:**
+
+| Method | Reference |
+|--------|-----------|
+| PQN normalisation | Dieterle et al. (2006) *Anal. Chem.* 78(13):4281–90 |
+| XGBoost | Chen & Guestrin (2016) *KDD* |
+| SHAP | Lundberg & Lee (2017) *NeurIPS* |
+| ComBat batch correction | Johnson et al. (2007) *Biostatistics* 8(1):118–27 |
+| Boruta feature selection | Kursa & Rudnicki (2010) *J. Stat. Softw.* 36(11):1–13 |
+| MSEA | Xia & Wishart (2010) *Nucleic Acids Res.* 38:W71–77 |
+| KEGG | Kanehisa et al. (2023) *Nucleic Acids Res.* 51(D1):D587–D592 |
 
 ---
 
-## License
+## 📜 License
 
-MIT License — IISER Tirupati, 2025
+MIT License © IISER Tirupati, 2025
+
+---
+
+<div align="center">
+
+Made with 🧪 at **IISER Tirupati** · [niraj_20254009@students.iisertirupati.ac.in](mailto:niraj_20254009@students.iisertirupati.ac.in)
+
+</div>
