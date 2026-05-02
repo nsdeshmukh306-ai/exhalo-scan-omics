@@ -32,7 +32,7 @@ It combines:
 -  **Multi-omics integration** — VOC → pathway → gene expression overlay
 -  **Publication-quality reporting** — self-contained HTML report with all figures
 
-> **Dataset:** [MTBLS70](https://www.ebi.ac.uk/metabolights/MTBLS70) — Exhaled breath VOC profiles from 3 respiratory disease groups.
+
 
 ---
 
