@@ -30,7 +30,7 @@ It combines:
 -  **Machine learning classification** — XGBoost with nested cross-validation
 -  **Pathway & network analysis** — KEGG/HMDB enrichment + metabolite co-membership networks
 -  **Multi-omics integration** — VOC → pathway → gene expression overlay
--  **Publication-quality reporting** — self-contained HTML report with all figures
+  
 
 
 
