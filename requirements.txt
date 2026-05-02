@@ -1,0 +1,45 @@
+# =============================================================================
+# Exhalo-Scan v2.0.0 — Python Dependencies (pinned for reproducibility)
+# Install: pip install -r requirements.txt
+# Tested on Python 3.11+
+# Pinned 2026-05-02 — np.random.seed(42) used globally for reproducibility
+# =============================================================================
+
+# --- Core scientific stack ---
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.1
+statsmodels==0.14.2
+
+# --- Machine learning ---
+scikit-learn==1.5.1
+xgboost==2.1.1
+shap==0.45.1
+imbalanced-learn==0.12.3       # SMOTE for class-imbalance handling
+
+# --- Feature selection (v2) ---
+boruta==0.3                    # Boruta random forest feature selection
+
+# --- Network / graph analysis (v2) ---
+networkx==3.3                  # metabolite co-membership networks
+
+# --- Visualisation ---
+matplotlib==3.9.1
+seaborn==0.13.2
+plotly==5.22.0                 # interactive figures
+kaleido==0.2.1                 # plotly static export
+
+# --- Bioinformatics / metabolomics ---
+openpyxl==3.1.5                # read .xlsx supplementary tables
+requests==2.32.3               # PubChem + KEGG + MetaboLights REST APIs
+lxml==5.2.2                    # HTML/XML parsing for KEGG REST
+beautifulsoup4==4.12.3         # HTML parsing
+
+# --- Report generation ---
+jinja2==3.1.4                  # HTML report templating
+# weasyprint>=60.0             # optional: HTML → PDF (requires system libs)
+
+# --- Utilities ---
+tqdm==4.66.4
+joblib==1.4.2
+pyarrow==16.1.0                # fast parquet I/O (optional cache layer)
