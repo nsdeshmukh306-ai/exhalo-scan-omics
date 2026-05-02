@@ -20,7 +20,7 @@ Exhalo-Scan answers this using volatile organic compound (VOC) metabolomics, mac
 
 ---
 
-## 🔬 What is Exhalo-Scan?
+## What is Exhalo-Scan?
 
 Exhalo-Scan is a fully modular, end-to-end bioinformatics pipeline that classifies **Asthma**, **COPD**, and **Bronchiectasis** from exhaled breath **VOC profiles** — without any invasive procedures.
 
