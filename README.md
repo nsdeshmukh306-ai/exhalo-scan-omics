@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🫁 Exhalo-Scan v2.0.0
+# Exhalo-Scan
 
-### Publication-Grade Multi-Omic Respiratory Disease Classification via Volatomics
+### Multi-Omic Respiratory Disease Classification via Volatomics
 
 [![Nextflow](https://img.shields.io/badge/Nextflow-DSL2-brightgreen?logo=nextflow&logoColor=white)](https://nextflow.io)
 [![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
@@ -25,20 +25,20 @@ Exhalo-Scan answers this using volatile organic compound (VOC) metabolomics, mac
 Exhalo-Scan is a fully modular, end-to-end bioinformatics pipeline that classifies **Asthma**, **COPD**, and **Bronchiectasis** from exhaled breath **VOC profiles** — without any invasive procedures.
 
 It combines:
-- 🧹 **Robust preprocessing** — PQN normalisation, KNN imputation, ComBat batch correction
-- 🎯 **Biomarker discovery** — Random Forest + SHAP + Boruta + LASSO stability selection
-- 🤖 **Machine learning classification** — XGBoost with nested cross-validation
-- 🗺️ **Pathway & network analysis** — KEGG/HMDB enrichment + metabolite co-membership networks
-- 🧬 **Multi-omics integration** — VOC → pathway → gene expression overlay
-- 📊 **Publication-quality reporting** — self-contained HTML report with all figures
+-  **Robust preprocessing** — PQN normalisation, KNN imputation, ComBat batch correction
+-  **Biomarker discovery** — Random Forest + SHAP + Boruta + LASSO stability selection
+-  **Machine learning classification** — XGBoost with nested cross-validation
+-  **Pathway & network analysis** — KEGG/HMDB enrichment + metabolite co-membership networks
+-  **Multi-omics integration** — VOC → pathway → gene expression overlay
+-  **Publication-quality reporting** — self-contained HTML report with all figures
 
 > **Dataset:** [MTBLS70](https://www.ebi.ac.uk/metabolights/MTBLS70) — Exhaled breath VOC profiles from 3 respiratory disease groups.
 
 ---
 
-## 📊 Key Results
+## Key Results
 
-### 🔴 Classification Performance
+###  Classification Performance
 
 | ROC-AUC Curves | Confusion Matrix |
 |:-:|:-:|
@@ -52,7 +52,7 @@ It combines:
 
 ---
 
-### 🧬 Biomarker Discovery
+###  Biomarker Discovery
 
 | SHAP Summary Plot | Random Forest Feature Importance |
 |:-:|:-:|
@@ -61,7 +61,7 @@ It combines:
 
 ---
 
-### 🗺️ Pathway & Network Analysis
+###  Pathway & Network Analysis
 
 | Pathway Enrichment Dot Plot | VOC–Pathway Co-membership Network |
 |:-:|:-:|
@@ -70,7 +70,7 @@ It combines:
 
 ---
 
-### 🧹 Preprocessing & QC
+###  Preprocessing & QC
 
 | PCA Before & After Normalisation | VOC Intensity Distribution |
 |:-:|:-:|
@@ -86,7 +86,7 @@ It combines:
 
 ---
 
-## 🏗️ Pipeline Architecture
+##  Pipeline Architecture
 
 ```
 Raw VOC Peak Table (CSV)
@@ -152,7 +152,7 @@ Raw VOC Peak Table (CSV)
 
 ---
 
-## ⚡ Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -185,7 +185,7 @@ mv nextflow ~/.local/bin/
 
 ---
 
-## 🚀 Running the Pipeline
+##  Running the Pipeline
 
 ### Basic run
 
@@ -222,7 +222,7 @@ mv nextflow ~/.local/bin/
 
 ---
 
-## 📂 Input File Formats
+##  Input File Formats
 
 ### VOC Peak Table (`--raw_data`)
 
@@ -254,11 +254,11 @@ IDO1,2.45,0.0001
 
 ---
 
-## 📁 Output Structure
+##  Output Structure
 
 ```
 results/
-├── 🧹 preprocessing/
+├──  preprocessing/
 │   ├── processed_data.csv
 │   ├── metadata.csv
 │   └── qc_plots/
@@ -266,58 +266,58 @@ results/
 │       ├── pca_before_after.png
 │       └── intensity_distribution.png
 │
-├── 🔄 batch_correction/
+├──  batch_correction/
 │   ├── batch_corrected.csv
 │   ├── pca_batch_before.png
 │   └── pca_batch_after.png
 │
-├── 🎯 feature_selection/
+├──  feature_selection/
 │   ├── stable_features.csv
 │   ├── feature_stability_plot.png
 │   └── lasso_coef_plot.png
 │
-├── 🔬 biomarkers/
+├──  biomarkers/
 │   ├── top_biomarkers.csv
 │   ├── shap_summary_plot.png
 │   ├── rf_feature_importance.png
 │   └── biomarker_heatmap.png
 │
-├── 🤖 classification/
+├──  classification/
 │   ├── nested_cv_results.csv
 │   ├── classification_report.txt
 │   ├── confusion_matrix.png
 │   ├── roc_auc_curves.png
 │   └── pr_curves.png
 │
-├── ✅ external_validation/    ← if --ext_data provided
+├──  external_validation/    ← if --ext_data provided
 │   ├── confusion_matrix_external.png
 │   ├── roc_curves_external.png
 │   └── performance_comparison.csv
 │
-├── 💪 robustness/
+├──  robustness/
 │   ├── robustness_report.csv
 │   └── performance_vs_perturbation.png
 │
-├── 🗺️  enrichment/
+├──   enrichment/
 │   ├── msea_results.csv
 │   ├── pathway_dotplot.png
 │   └── voc_pathway_network.png
 │
-├── 🏷️  annotation/
+├──   annotation/
 │   └── annotation_table.csv
 │
-├── 🧬 multiomics/
+├──  multiomics/
 │   ├── pathway_gene_metabolite_map.csv
 │   └── integrated_network.png
 │
-└── 📄 report/
-    ├── final_report.html      ← ⭐ MAIN OUTPUT
+└──  report/
+    ├── final_report.html      ←  MAIN OUTPUT
     └── summary_metrics_v2.json
 ```
 
 ---
 
-## ⚙️ Configuration
+##  Configuration
 
 Key parameters in `nextflow.config`:
 
@@ -339,7 +339,7 @@ Key parameters in `nextflow.config`:
 
 ---
 
-## 🔁 Reproducibility
+##  Reproducibility
 
 ```bash
 # Export environment
@@ -354,7 +354,7 @@ nextflow log
 
 ---
 
-## 📚 Citation
+##  Citation
 
 If you use Exhalo-Scan in your research, please cite:
 
@@ -375,7 +375,7 @@ If you use Exhalo-Scan in your research, please cite:
 
 ---
 
-## 📜 License
+##  License
 
 MIT License © IISER Tirupati, 2025
 
@@ -383,6 +383,6 @@ MIT License © IISER Tirupati, 2025
 
 <div align="center">
 
-Made with 🧪 at **IISER Tirupati** · [niraj_20254009@students.iisertirupati.ac.in](mailto:niraj_20254009@students.iisertirupati.ac.in)
+Made at **IISER Tirupati** · [niraj_20254009@students.iisertirupati.ac.in](mailto:niraj_20254009@students.iisertirupati.ac.in)
 
 </div>
